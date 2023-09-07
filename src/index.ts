@@ -13,7 +13,7 @@ export async function runInTransaction<T>(
   mutations: MutationCallback<T>,
   connection: Connection = mongoose.connection,
 ): Promise<T> {
-  let session: ClientSession = await connection.startSession();
+  const session: ClientSession = await connection.startSession();
 
   session.startTransaction();
   try {
