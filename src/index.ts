@@ -6,15 +6,14 @@ export type MutationCallback<T> = (session: ClientSession) => Promise<T>;
  * Runs the provided `mutations` callback within a transaction and commits the changes to the DB
  * only when it has run successfully.
  *
- * @param mutations A callback which does DB writes and reads using the session.
+ * @param mutations - A callback which does DB writes and reads using the session.
+ * @param connection - the mongoose connection that should be used to run the transaction
  */
-export async function runInTransaction<T>(mutations: MutationCallback<T>, connection?: Connection): Promise<T> {
-  let session: ClientSession;
-  if(connection){
-    session =await connection.startSession()
-  } else {
-    session = await mongoose.startSession();
-  }
+export async function runInTransaction<T>(
+  mutations: MutationCallback<T>,
+  connection: Connection = mongoose.connection,
+): Promise<T> {
+  let session: ClientSession = await connection.startSession();
 
   session.startTransaction();
   try {
